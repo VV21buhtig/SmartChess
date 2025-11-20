@@ -22,17 +22,19 @@ namespace SmartChess.Services
             _databaseService = databaseService;
         }
 
-        public async Task InitializeGame()
+        public void InitializeGame()
         {
             _chessEngine.InitializeGame(); // Вызов метода из IChessEngine
             CurrentBoard = _chessEngine.CurrentBoard;
             CurrentPlayer = _chessEngine.CurrentPlayer;
             GameState = _chessEngine.GameState;
 
+            // We can't do async operations in initialization, so we'll create the game when needed
+            // Or just initialize the game object without saving to DB here
             if (_currentUser != null)
             {
                 _currentGame = new Game { UserId = _currentUser.Id };
-                _currentGame = await _databaseService.CreateGameAsync(_currentGame);
+                // We'll save to DB when the first move is made or when explicitly requested
             }
         }
 
@@ -52,6 +54,13 @@ namespace SmartChess.Services
                 };
                 _currentGame = await _databaseService.CreateGameAsync(_currentGame);
             }
+        }
+
+        public async Task StartNewGameAsync()
+        {
+            // Parameterless version - starts a game without user (for guest play)
+            _currentUser = null;
+            InitializeGame();
         }
 
         public async Task<bool> MakeMoveAsync(Position from, Position to)
