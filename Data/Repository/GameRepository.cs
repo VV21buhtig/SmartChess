@@ -30,5 +30,11 @@ namespace SmartChess.Data.Repository
         {
             return await _context.Games.Where(g => g.UserId == userId).ToListAsync();
         }
+
+        public async Task UpdateGameAsync(Game game)
+        {
+            _context.Games.Update(game);
+            await _context.SaveChangesAsync();
+        }
     }
 }
