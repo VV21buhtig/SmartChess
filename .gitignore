@@ -1,5 +1,5 @@
-```gitignore
-# Build artifacts and binaries
+```
+# Compiled and build artifacts
 *.exe
 *.dll
 *.so
@@ -8,59 +8,35 @@
 *.out
 bin/
 obj/
-Debug/
-Release/
-*.userprefs
-*.user
-
 # Dependencies
-packages/
 node_modules/
 venv/
 .venv/
-__pycache__/
-*.egg-info/
-.Python
-.pytest_cache/
-.mypy_cache/
-
+packages/
 # Logs and temp files
 *.log
 *.tmp
 *.swp
-*.swo
-*.userprefs
-
 # Environment
 .env
 .env.local
 *.env.*
-
 # Editors
 .vscode/
 .idea/
-*.swp
-*.swo
-
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+# Build outputs
+dist/
+build/
+target/
+# Coverage
+coverage/
+htmlcov/
+.coverage
 # OS generated files
 .DS_Store
 Thumbs.db
-desktop.ini
-
-# Coverage reports
-coverage/
-htmlcov/
-*.coverage
-
-# Distribution / packaging
-dist/
-build/
-*.tar.gz
-*.whl
-*.zip
-
-# IDE specific
-.vs/
-*.userprefs
-*.user
 ```
