@@ -40,17 +40,28 @@ namespace SmartChess.Services
         {
             _currentUser = user;
             InitializeGame(); // Используем внутренний метод
-            // ... (логика создания игры в БД)
+            
+            // Создаем новую игру в базе данных
+            if (_currentUser != null)
+            {
+                _currentGame = new Game 
+                { 
+                    UserId = _currentUser.Id,
+                    StartTime = DateTime.Now,
+                    Result = "In Progress"
+                };
+                _currentGame = await _databaseService.CreateGameAsync(_currentGame);
+            }
         }
 
         public async Task<bool> MakeMoveAsync(Position from, Position to)
         {
-            //System.Diagnostics.Trace.WriteLine($"=== GAME SESSION MAKE MOVE: {from} -> {to} ===");
-            //if (_currentGame == null)
-            //{
-            //    System.Diagnostics.Trace.WriteLine("=== ERROR: No current game ===");
-            //    return false; // Игра не начата
-            //}
+            System.Diagnostics.Trace.WriteLine($"=== GAME SESSION MAKE MOVE: {from} -> {to} ===");
+            if (_currentGame == null)
+            {
+                System.Diagnostics.Trace.WriteLine("=== ERROR: No current game ===");
+                return false; // Игра не начата
+            }
 
             // Вызов метода из ChessEngine
             bool moveSuccess = await _chessEngine.MakeMoveAsync(from, to);
@@ -64,7 +75,36 @@ namespace SmartChess.Services
                 GameState = _chessEngine.GameState;
                 System.Diagnostics.Trace.WriteLine("=== MOVE SUCCESS IN SESSION ===");
                 // Запись хода в БД
-                // ... (логика создания и сохранения Move в БД)
+                var move = new Move
+                {
+                    GameId = _currentGame.Id,
+                    MoveNumber = _currentGame.MoveCount + 1,
+                    FromPosition = $"{(char)('a' + from.X)}{(char)('1' + from.Y)}",
+                    ToPosition = $"{(char)('a' + to.X)}{(char)('1' + to.Y)}",
+                    PieceType = CurrentBoard[to]?.Type.ToString() ?? "",
+                    Color = CurrentBoard[to]?.Color.ToString() ?? "",
+                    IsCapture = CurrentBoard[to] != null,
+                    CapturedPiece = CurrentBoard[to]?.Type.ToString()
+                };
+                await _databaseService.CreateMoveAsync(move);
+                _currentGame.MoveCount++;
+                
+                // Проверяем, завершилась ли игра
+                if (GameState == Models.Chess.Enums.GameState.Checkmate)
+                {
+                    // Мат - победитель - игрок, который НЕ в шахе (после хода)
+                    // CurrentPlayer уже изменился, поэтому побеждает предыдущий игрок
+                    var winnerColor = CurrentPlayer == Models.Chess.Enums.Color.White ? Models.Chess.Enums.Color.Black : Models.Chess.Enums.Color.White;
+                    _currentGame.Result = $"Checkmate - {winnerColor} wins";
+                    _currentGame.EndTime = DateTime.Now;
+                    await _databaseService.UpdateGameAsync(_currentGame); // Обновляем игру в БД
+                }
+                else if (GameState == Models.Chess.Enums.GameState.Stalemate)
+                {
+                    _currentGame.Result = "Stalemate - Draw";
+                    _currentGame.EndTime = DateTime.Now;
+                    await _databaseService.UpdateGameAsync(_currentGame); // Обновляем игру в БД
+                }
             }
             else
             {
