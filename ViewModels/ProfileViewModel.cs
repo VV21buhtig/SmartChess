@@ -9,17 +9,15 @@ namespace SmartChess.ViewModels
     public class ProfileViewModel : INotifyPropertyChanged
     {
         private readonly DatabaseService _databaseService;
-        private readonly MainViewModel _mainViewModel;
         private User? _user;
 
         //public ProfileViewModel(DatabaseService databaseService) // Принимаем только DatabaseService
         //{
         //    _databaseService = databaseService;
         //}
-        public ProfileViewModel(DatabaseService databaseService, MainViewModel mainViewModel)
+        public ProfileViewModel(DatabaseService databaseService)
         {
             _databaseService = databaseService;
-            _mainViewModel = mainViewModel;
             LoadProfileCommand = new RelayCommand(async () => await LoadProfileAsync()); 
         }
 
@@ -54,11 +52,13 @@ namespace SmartChess.ViewModels
         private async Task LoadProfileAsync() 
         {
             // Загружаем профиль текущего пользователя
-            if (_mainViewModel.CurrentUser?.Id != null)
+            if (CurrentUser != null && CurrentUser.Id != null)
             {
-                User = await _databaseService.GetUserByIdAsync(_mainViewModel.CurrentUser.Id);
+                User = await _databaseService.GetUserByIdAsync(CurrentUser.Id);
             }
         }
+        
+        public User? CurrentUser { get; set; }
         public event PropertyChangedEventHandler? PropertyChanged;
 
         protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
