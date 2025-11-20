@@ -17,7 +17,7 @@ namespace SmartChess.Data.Repository
         public async Task<Game> CreateGameAsync(Game game)
         {
             _context.Games.Add(game);
-            await _context.SaveChangesAsync();
+            // Не вызываем SaveChangesAsync здесь, это будет сделано в DatabaseService
             return game;
         }
 
@@ -34,7 +34,7 @@ namespace SmartChess.Data.Repository
         public async Task UpdateGameAsync(Game game)
         {
             _context.Games.Update(game);
-            await _context.SaveChangesAsync();
+            // Не вызываем SaveChangesAsync здесь, это будет сделано в DatabaseService
         }
     }
 }

@@ -26,7 +26,7 @@ namespace SmartChess.Data.Repository
         public async Task<User> CreateUserAsync(User user)
         {
             _context.Users.Add(user);
-            await _context.SaveChangesAsync();
+            // Не вызываем SaveChangesAsync здесь, это будет сделано в DatabaseService
             return user;
         }
     }
