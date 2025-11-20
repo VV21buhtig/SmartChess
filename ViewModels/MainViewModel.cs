@@ -22,7 +22,11 @@ namespace SmartChess.ViewModels
 
             NavigateToGameCommand = new RelayCommand(() => CurrentView = GameViewModel);
             NavigateToHistoryCommand = new RelayCommand(() => CurrentView = HistoryViewModel);
-            NavigateToProfileCommand = new RelayCommand(() => CurrentView = ProfileViewModel);
+            NavigateToProfileCommand = new RelayCommand(() => {
+                ProfileViewModel.CurrentUser = CurrentUser; // Устанавливаем текущего пользователя перед отображением профиля
+                ProfileViewModel.LoadProfileCommand.Execute(null); // Загружаем профиль
+                CurrentView = ProfileViewModel;
+            });
             NavigateToAuthCommand = new RelayCommand(() => CurrentView = AuthViewModel);
 
 
@@ -32,7 +36,11 @@ namespace SmartChess.ViewModels
             
             // Подписываемся на события навигации из GameViewModel
             GameViewModel.OnNavigateToHistoryRequested += () => CurrentView = HistoryViewModel;
-            GameViewModel.OnNavigateToProfileRequested += () => CurrentView = ProfileViewModel;
+            GameViewModel.OnNavigateToProfileRequested += () => {
+                ProfileViewModel.CurrentUser = CurrentUser; // Устанавливаем текущего пользователя перед отображением профиля
+                ProfileViewModel.LoadProfileCommand.Execute(null); // Загружаем профиль
+                CurrentView = ProfileViewModel;
+            };
 
             // Начинаем с экрана авторизации
             CurrentView = AuthViewModel;
@@ -73,6 +81,7 @@ namespace SmartChess.ViewModels
         {
             CurrentUser = user;
             HistoryViewModel.SetCurrentUserId(user?.Id); // Notify HistoryViewModel of current user
+            ProfileViewModel.CurrentUser = user; // Устанавливаем текущего пользователя в профиль
             CurrentView = GameViewModel; // Переход к экрану игры
         }
 
@@ -89,6 +98,7 @@ namespace SmartChess.ViewModels
         {
             CurrentUser = user;
             HistoryViewModel.SetCurrentUserId(user?.Id); // Notify HistoryViewModel of current user
+            ProfileViewModel.CurrentUser = user; // Обновляем пользователя в профиле
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
