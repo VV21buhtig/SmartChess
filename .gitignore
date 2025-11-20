@@ -1,55 +1,62 @@
-```gitignore
-# Build artifacts
+```
+# Compiled and build artifacts
+*.o
 *.obj
 *.exe
 *.dll
 *.so
 *.a
 *.out
+*.pyc
+__pycache__/
 
 # Dependencies
-packages/
-lib/
 node_modules/
 venv/
 .venv/
-__pycache__/
-*.egg-info/
-.Python/
+.env
+.env.local
+*.env.*
 
-# Logs
+# Logs and temp files
 *.log
+*.tmp
+*.swp
 
-# OS generated files
-.DS_Store
-Thumbs.db
-
-# Editor files
+# Editors
 .vscode/
 .idea/
 *.swp
 *.swo
 
-# Environment
-.env
-.env.local
-*.env.*
+# OS generated files
+.DS_Store
+Thumbs.db
 
-# Coverage
+# Build directories (if present)
+dist/
+build/
+target/
+.gradle/
+
+# Coverage reports
 coverage/
 htmlcov/
 .coverage
 
-# Distribution / packaging
-dist/
-build/
-*.tar.gz
-*.whl
-*.zip
-
-# Testing
+# Python specific
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+.Python
+*.so
 .pytest_cache/
 .mypy_cache/
-.nyc_output/
-coverage.xml
+
+# Dotenv files
+.env
+.env.local
+.env.*
+!.env.example
 ```
