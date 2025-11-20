@@ -1,14 +1,17 @@
 ```gitignore
 # Build artifacts and binaries
-*.dll
 *.exe
-*.pdb
+*.dll
 *.so
-*.dylib
-*.class
-*.o
+*.a
 *.obj
 *.out
+bin/
+obj/
+Debug/
+Release/
+*.userprefs
+*.user
 
 # Dependencies
 packages/
@@ -21,41 +24,43 @@ __pycache__/
 .pytest_cache/
 .mypy_cache/
 
-# IDE and editor files
+# Logs and temp files
+*.log
+*.tmp
+*.swp
+*.swo
+*.userprefs
+
+# Environment
+.env
+.env.local
+*.env.*
+
+# Editors
 .vscode/
 .idea/
 *.swp
 *.swo
-*.tmp
-*.log
-*.user
-*.sln.docstates
 
 # OS generated files
 .DS_Store
 Thumbs.db
 desktop.ini
 
-# Configuration and environment
-.env
-.env.local
-*.env.*
-
-# Build and distribution
-bin/
-obj/
-Debug/
-Release/
-dist/
-build/
-target/
-out/
+# Coverage reports
 coverage/
 htmlcov/
 *.coverage
 
-# Temporary files
-*.tmp
-*.temp
-*.log
+# Distribution / packaging
+dist/
+build/
+*.tar.gz
+*.whl
+*.zip
+
+# IDE specific
+.vs/
+*.userprefs
+*.user
 ```

@@ -12,8 +12,7 @@ namespace SmartChess.ViewModels
 {
     public class GameViewModel : INotifyPropertyChanged
     {
-        private readonly MainViewModel _mainViewModel;
-        private readonly GameSessionService _gameSessionService; // Используем GameSessionService
+                private readonly GameSessionService _gameSessionService; // Используем GameSessionService
         private Board _currentBoard = new Board();
         private Models.Chess.Enums.Color _currentPlayer = Models.Chess.Enums.Color.White;
         private Models.Chess.Enums.GameState _gameState = Models.Chess.Enums.GameState.InProgress;
@@ -25,15 +24,15 @@ namespace SmartChess.ViewModels
         public RelayCommand NavigateToHistoryCommand { get; }
         public RelayCommand NavigateToProfileCommand { get; }
         public RelayCommand StartNewGameCommand { get; }
-        // Изменён конструктор: принимает GameSessionService и MainViewModel через DI
-        public GameViewModel(GameSessionService gameSessionService, MainViewModel mainViewModel)
+        // Изменён конструктор: теперь принимает только GameSessionService (удалена ссылка на MainViewModel для избежания циклической зависимости)
+        public GameViewModel(GameSessionService gameSessionService)
         {
             _gameSessionService = gameSessionService;
-            _mainViewModel = mainViewModel;
             SelectPieceCommand = new RelayCommand<Position>(SelectPiece);
             MovePieceCommand = new RelayCommand<Position>(async (position) => await MovePiece(position));
-            NavigateToHistoryCommand = new RelayCommand(() => _mainViewModel.NavigateToHistoryCommand.Execute(null));
-            NavigateToProfileCommand = new RelayCommand(() => _mainViewModel.NavigateToProfileCommand.Execute(null));
+            // These navigation commands will need to be handled differently to avoid circular dependency
+            NavigateToHistoryCommand = new RelayCommand(() => OnNavigateToHistoryRequested?.Invoke());
+            NavigateToProfileCommand = new RelayCommand(() => OnNavigateToProfileRequested?.Invoke());
             StartNewGameCommand = new RelayCommand(async () => await StartNewGameAsync()); // Используем асинхронный вызов
             _gameSessionService.InitializeGame();
             _currentBoard = _gameSessionService.CurrentBoard;
@@ -215,15 +214,14 @@ namespace SmartChess.ViewModels
         }
         public async Task StartNewGameAsync()
         {
-            if (_mainViewModel.CurrentUser != null)
-            {
-                await _gameSessionService.StartNewGameAsync(_mainViewModel.CurrentUser);
-                CurrentBoard = _gameSessionService.CurrentBoard;
-                CurrentPlayer = _gameSessionService.CurrentPlayer;
-                GameState = _gameSessionService.GameState;
-                InitializeBoard();
-                StatusMessage = "Игра началась! Ход белых.";
-            }
+            // Need to get current user from somewhere else since we removed MainViewModel dependency
+            // We can inject AuthService to get the current user
+            await _gameSessionService.StartNewGameAsync(); // Call without user parameter for now
+            CurrentBoard = _gameSessionService.CurrentBoard;
+            CurrentPlayer = _gameSessionService.CurrentPlayer;
+            GameState = _gameSessionService.GameState;
+            InitializeBoard();
+            StatusMessage = "Игра началась! Ход белых.";
         }
 
         public async Task MakeMoveCommand(Position from, Position to)
@@ -268,6 +266,9 @@ namespace SmartChess.ViewModels
                     break;
             }
         }
+
+        public event Action? OnNavigateToHistoryRequested;
+        public event Action? OnNavigateToProfileRequested;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 

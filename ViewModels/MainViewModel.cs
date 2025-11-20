@@ -29,6 +29,10 @@ namespace SmartChess.ViewModels
             // Подписываемся на события из AuthViewModel
             AuthViewModel.LoginSuccess += OnAuthLoginSuccess;
             AuthViewModel.RegistrationSuccess += OnAuthRegistrationSuccess;
+            
+            // Подписываемся на события навигации из GameViewModel
+            GameViewModel.OnNavigateToHistoryRequested += () => CurrentView = HistoryViewModel;
+            GameViewModel.OnNavigateToProfileRequested += () => CurrentView = ProfileViewModel;
 
             // Начинаем с экрана авторизации
             CurrentView = AuthViewModel;
