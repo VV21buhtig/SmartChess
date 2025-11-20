@@ -9,5 +9,6 @@ namespace SmartChess.Data.Repository
         Task<Game> CreateGameAsync(Game game);
         Task<Game?> GetGameByIdAsync(int id);
         Task<List<Game>> GetGamesByUserIdAsync(int userId);
+        Task UpdateGameAsync(Game game);
     }
 }

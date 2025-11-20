@@ -69,5 +69,10 @@ namespace SmartChess.Services
         {
             return await _context.SaveChangesAsync();
         }
+
+        public async Task UpdateGameAsync(Game game)
+        {
+            await _gameRepository.UpdateGameAsync(game);
+        }
     }
 }
