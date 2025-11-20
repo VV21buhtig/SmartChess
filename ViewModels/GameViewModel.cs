@@ -34,8 +34,10 @@ namespace SmartChess.ViewModels
             NavigateToHistoryCommand = new RelayCommand(() => OnNavigateToHistoryRequested?.Invoke());
             NavigateToProfileCommand = new RelayCommand(() => OnNavigateToProfileRequested?.Invoke());
             StartNewGameCommand = new RelayCommand(async () => await StartNewGameAsync()); // Используем асинхронный вызов
-            _gameSessionService.InitializeGame();
+            // Инициализируем доску с текущим состоянием из GameSessionService
             _currentBoard = _gameSessionService.CurrentBoard;
+            CurrentPlayer = _gameSessionService.CurrentPlayer;
+            GameState = _gameSessionService.GameState;
             InitializeBoard();
         }
 

@@ -10,6 +10,7 @@ namespace SmartChess.Services
         public Board CurrentBoard { get; private set; } = new Board();
         public Models.Chess.Enums.Color CurrentPlayer { get; private set; } = Models.Chess.Enums.Color.White;
         public Models.Chess.Enums.GameState GameState { get; private set; } = Models.Chess.Enums.GameState.InProgress;
+        public User? CurrentUser => _currentUser; // Добавляем свойство для доступа к текущему пользователю
 
         private readonly IChessEngine _chessEngine;
         private readonly DatabaseService _databaseService;
@@ -58,9 +59,16 @@ namespace SmartChess.Services
 
         public async Task StartNewGameAsync()
         {
-            // Parameterless version - starts a game without user (for guest play)
-            _currentUser = null;
-            InitializeGame();
+            // If we have a current user, start a game for that user
+            if (_currentUser != null)
+            {
+                await StartNewGameAsync(_currentUser);
+            }
+            else
+            {
+                // Parameterless version - starts a game without user (for guest play)
+                InitializeGame();
+            }
         }
 
         public async Task<bool> MakeMoveAsync(Position from, Position to)
