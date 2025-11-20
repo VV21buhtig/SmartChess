@@ -1,0 +1,50 @@
+﻿<Window x:Class="SmartChess.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SmartChess.Views"
+        xmlns:vm="clr-namespace:SmartChess.ViewModels"
+        xmlns:uc="clr-namespace:SmartChess.Views.UserControls"
+        mc:Ignorable="d"
+        Title="SmartChess" Height="600" Width="800">
+
+    <Window.Resources>
+        <!-- DataTemplate для AuthViewModel -->
+        <DataTemplate DataType="{x:Type vm:AuthViewModel}">
+            <uc:LoginView />
+        </DataTemplate>
+        <!-- DataTemplate для GameViewModel -->
+        <DataTemplate DataType="{x:Type vm:GameViewModel}">
+            <uc:ChessBoardView />
+        </DataTemplate>
+        <!-- DataTemplate для HistoryViewModel -->
+        <DataTemplate DataType="{x:Type vm:HistoryViewModel}">
+            <uc:GameHistoryView />
+        </DataTemplate>
+        <!-- DataTemplate для ProfileViewModel -->
+        <DataTemplate DataType="{x:Type vm:ProfileViewModel}">
+            <uc:UserProfileView />
+        </DataTemplate>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <!-- Панель навигации -->
+            <RowDefinition Height="*"/>
+            <!-- Контент -->
+        </Grid.RowDefinitions>
+
+        <!-- Панель навигации -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Background="LightGray">
+            <Button Content="Игра" Command="{Binding NavigateToGameCommand}" Margin="5" Padding="10,5"/>
+            <Button Content="История" Command="{Binding NavigateToHistoryCommand}" Margin="5" Padding="10,5"/>
+            <Button Content="Профиль" Command="{Binding NavigateToProfileCommand}" Margin="5" Padding="10,5"/>
+            <Button Content="Выход" Command="{Binding NavigateToAuthCommand}" Margin="5" Padding="10,5"/>
+        </StackPanel>
+
+        <!-- Контент (шахматы, история, профиль) -->
+        <ContentControl Grid.Row="1" Content="{Binding CurrentView}"/>
+    </Grid>
+</Window>

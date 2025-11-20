@@ -1,0 +1,19 @@
+## ВРЕМЕННЫЕ ФАЙЛЫ VS2022 ##
+**/bin/
+**/obj/
+**/.vs/
+*.user
+*.suo
+*.csproj.user
+
+## СБОРОЧНЫЕ ФАЙЛЫ ##
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Bb]uild/
+*.cachefile
+
+## NUGET ##
+**/packages/*
+*.nupkg
