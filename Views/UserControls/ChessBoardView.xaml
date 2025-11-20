@@ -7,14 +7,26 @@
              xmlns:components="clr-namespace:SmartChess.Views.Components"
              xmlns:converters="clr-namespace:SmartChess.Resources.Converters"
              mc:Ignorable="d"
-             d:DesignHeight="480" d:DesignWidth="480">
+             d:DesignHeight="500" d:DesignWidth="480">
 
     <UserControl.Resources>
         <converters:StringToImageSourceConverter x:Key="StringToImageConverter"/>
     </UserControl.Resources>
 
     <Grid>
-        <ItemsControl ItemsSource="{Binding BoardSquares}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <!-- Панель управления -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="5" Background="LightGray">
+            <Button Content="Новая игра" Command="{Binding StartNewGameCommand}" Margin="5" Padding="10,5"/>
+            <TextBlock Text="{Binding StatusMessage}" VerticalAlignment="Center" Margin="10,0"/>
+        </StackPanel>
+        
+        <!-- Шахматная доска -->
+        <ItemsControl Grid.Row="1" ItemsSource="{Binding BoardSquares}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <UniformGrid Columns="8" Rows="8"/>

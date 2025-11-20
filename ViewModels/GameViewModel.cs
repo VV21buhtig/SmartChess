@@ -24,14 +24,17 @@ namespace SmartChess.ViewModels
         public RelayCommand<Position> MovePieceCommand { get; }
         public RelayCommand NavigateToHistoryCommand { get; }
         public RelayCommand NavigateToProfileCommand { get; }
-        // Изменён конструктор: принимает GameSessionService через DI
-        public GameViewModel(GameSessionService gameSessionService)
+        public RelayCommand StartNewGameCommand { get; }
+        // Изменён конструктор: принимает GameSessionService и MainViewModel через DI
+        public GameViewModel(GameSessionService gameSessionService, MainViewModel mainViewModel)
         {
             _gameSessionService = gameSessionService;
+            _mainViewModel = mainViewModel;
             SelectPieceCommand = new RelayCommand<Position>(SelectPiece);
             MovePieceCommand = new RelayCommand<Position>(async (position) => await MovePiece(position));
             NavigateToHistoryCommand = new RelayCommand(() => _mainViewModel.NavigateToHistoryCommand.Execute(null));
             NavigateToProfileCommand = new RelayCommand(() => _mainViewModel.NavigateToProfileCommand.Execute(null));
+            StartNewGameCommand = new RelayCommand(async () => await StartNewGameAsync()); // Используем асинхронный вызов
             _gameSessionService.InitializeGame();
             _currentBoard = _gameSessionService.CurrentBoard;
             InitializeBoard();
@@ -210,19 +213,17 @@ namespace SmartChess.ViewModels
                 ClearSelection();
             }
         }
-        public async void StartNewGameCommand()
+        public async Task StartNewGameAsync()
         {
-            // Предположим, _mainViewModel доступен через DI или передаётся в конструктор
-            // await _gameSessionService.StartNewGameAsync(_mainViewModel.CurrentUser);
-            // Или если пользователь передаётся напрямую
-            // await _gameSessionService.StartNewGameAsync(someUser);
-
-            // Для демонстрации, просто инициализируем игру через GameSessionService
-            // _gameSessionService.InitializeGame(); // Вызов метода из GameSessionService
-            // CurrentBoard = _gameSessionService.CurrentBoard;
-            // CurrentPlayer = _gameSessionService.CurrentPlayer;
-            // GameState = _gameSessionService.GameState;
-             StatusMessage = "Игра началась! Ход белых.";
+            if (_mainViewModel.CurrentUser != null)
+            {
+                await _gameSessionService.StartNewGameAsync(_mainViewModel.CurrentUser);
+                CurrentBoard = _gameSessionService.CurrentBoard;
+                CurrentPlayer = _gameSessionService.CurrentPlayer;
+                GameState = _gameSessionService.GameState;
+                InitializeBoard();
+                StatusMessage = "Игра началась! Ход белых.";
+            }
         }
 
         public async Task MakeMoveCommand(Position from, Position to)
