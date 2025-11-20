@@ -11,18 +11,24 @@ namespace SmartChess.ViewModels
     public class HistoryViewModel : INotifyPropertyChanged
     {
         private readonly DatabaseService _databaseService;
-        private readonly MainViewModel _mainViewModel;
+        private int? _currentUserId; // Store user ID instead of depending on MainViewModel
         private ObservableCollection<Game> _games = new ObservableCollection<Game>();
 
-        //public HistoryViewModel()
-        //{
-        //    _databaseService = new DatabaseService(new Data.AppDbContext(), new Data.Repository.UserRepository(new Data.AppDbContext()), new Data.Repository.GameRepository(new Data.AppDbContext()), new Data.Repository.MoveRepository(new Data.AppDbContext()));
-        //}
-        public HistoryViewModel(DatabaseService databaseService, MainViewModel mainViewModel)
+        public HistoryViewModel(DatabaseService databaseService)
         {
             _databaseService = databaseService;
-            _mainViewModel = mainViewModel;
             LoadGamesCommand = new RelayCommand(async () => await LoadGamesAsync()); // ← исправлено
+        }
+        
+        // Method to set current user ID (to be called from MainViewModel or elsewhere)
+        public void SetCurrentUserId(int? userId)
+        {
+            _currentUserId = userId;
+            // Optionally, reload games when user ID is set
+            if (_currentUserId.HasValue)
+            {
+                _ = LoadGamesAsync();
+            }
         }
 
 
@@ -50,9 +56,9 @@ namespace SmartChess.ViewModels
         private async Task LoadGamesAsync() // ← ДОБАВЬ private
         {
             // Загружаем игры текущего пользователя
-            if (_mainViewModel.CurrentUser?.Id != null)
+            if (_currentUserId.HasValue)
             {
-                var games = await _databaseService.GetGamesByUserIdAsync(_mainViewModel.CurrentUser.Id);
+                var games = await _databaseService.GetGamesByUserIdAsync(_currentUserId.Value);
                 Games = new ObservableCollection<Game>(games);
             }
         }

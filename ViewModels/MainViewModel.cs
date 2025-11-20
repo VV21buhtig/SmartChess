@@ -72,6 +72,7 @@ namespace SmartChess.ViewModels
         private void OnAuthLoginSuccess(User user)
         {
             CurrentUser = user;
+            HistoryViewModel.SetCurrentUserId(user?.Id); // Notify HistoryViewModel of current user
             CurrentView = GameViewModel; // Переход к экрану игры
         }
 
@@ -81,6 +82,13 @@ namespace SmartChess.ViewModels
             // AuthViewModel.Message = "Регистрация успешна! Теперь войдите.";
             // Или сразу переключить режим
             AuthViewModel.IsRegisterMode = false; // Переключаем на экран входа
+        }
+        
+        // Method to update user when logging out or changing user
+        public void UpdateCurrentUser(User? user)
+        {
+            CurrentUser = user;
+            HistoryViewModel.SetCurrentUserId(user?.Id); // Notify HistoryViewModel of current user
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
