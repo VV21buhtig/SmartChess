@@ -17,7 +17,7 @@ namespace SmartChess.Data.Repository
         public async Task<Move> CreateMoveAsync(Move move)
         {
             _context.Moves.Add(move);
-            await _context.SaveChangesAsync();
+            // Не вызываем SaveChangesAsync здесь, это будет сделано в DatabaseService
             return move;
         }
 

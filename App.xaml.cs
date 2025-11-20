@@ -27,7 +27,9 @@ namespace SmartChess
                     services.AddSingleton<IConfiguration>(context.Configuration);
 
                     // База данных
-                    services.AddDbContext<AppDbContext>();
+                    services.AddDbContext<AppDbContext>(options =>
+                        options.UseSqlServer(
+                            @"Server=LAPTOP-EU7O01O0\SQLEXPRESS01;Database=SmartChessDB;Trusted_Connection=true;MultipleActiveResultSets=true;TrustServerCertificate=True;"));
                     services.AddScoped<IUserRepository, UserRepository>();
                     services.AddScoped<IGameRepository, GameRepository>();
                     services.AddScoped<IMoveRepository, MoveRepository>();
@@ -76,8 +78,7 @@ namespace SmartChess
                     PasswordHash = passwordHash
                 };
 
-                await dbService.CreateUserAsync(adminUser);
-                await dbService.SaveChangesAsync(); // Сохранить изменения в БД
+                await dbService.CreateUserAsync(adminUser); // Это теперь вызывает SaveChangesAsync внутри
                 Console.WriteLine("Администратор 'admin' создан с паролем 'admin123'.");
             }
             else

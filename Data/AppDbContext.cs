@@ -12,11 +12,8 @@ namespace SmartChess.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (!optionsBuilder.IsConfigured)
-            {
-                optionsBuilder.UseSqlServer(
-                    @"Server=LAPTOP-EU7O01O0\SQLEXPRESS01;Database=SmartChessDB;Trusted_Connection=true;MultipleActiveResultSets=true;TrustServerCertificate=True;");
-            }
+            // Конфигурация будет передана через DI
+            // Не нужно задавать строку подключения здесь, если она уже указана в Program.cs/App.xaml.cs
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
